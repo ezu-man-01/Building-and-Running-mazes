@@ -82,12 +82,63 @@ def draw_maze(path=None, dead=None, cur=None):
     pygame.display.update()
 
 
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+def get_neighbors(r, c):
+    neighbors = []
 
-    screen.fill(WHITE)
-    pygame.display.update()
-    clock.tick(60)
+    if r > 0 and not seen[r - 1][c]:
+        neighbors.append((r - 1, c, "up"))
+
+    if r < rows - 1 and not seen[r + 1][c]:
+        neighbors.append((r + 1, c, "down"))
+
+    if c > 0 and not seen[r][c - 1]:
+        neighbors.append((r, c - 1, "left"))
+
+    if c < cols - 1 and not seen[r][c + 1]:
+        neighbors.append((r, c + 1, "right"))
+
+    return neighbors
+
+
+def remove_wall(r, c, nr, nc, direction):
+    if direction == "up":
+        top_wall[r][c] = 0
+    elif direction == "down":
+        top_wall[nr][nc] = 0
+    elif direction == "left":
+        right_wall[r][nc] = 0
+    elif direction == "right":
+        right_wall[r][c] = 0
+
+
+def generate_maze():
+    path = []
+
+    r = random.randint(0, rows - 1)
+    c = random.randint(0, cols - 1)
+    seen[r][c] = True
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        draw_maze(cur=(r, c))
+        clock.tick(10)
+
+        neighbors = get_neighbors(r, c)
+
+        if neighbors:
+            nr, nc, direction = random.choice(neighbors)
+            path.append((r, c))
+
+            remove_wall(r, c, nr, nc, direction)
+
+            r, c = nr, nc
+            seen[r][c] = True
+
+        elif path:
+            r, c = path.pop()
+        else:
+            break
