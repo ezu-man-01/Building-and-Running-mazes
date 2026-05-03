@@ -207,3 +207,15 @@ def solve_maze():
             dead.add(path.pop())
 
     return None
+
+
+generate_maze()
+solution = solve_maze()
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    draw_maze(path=solution)
