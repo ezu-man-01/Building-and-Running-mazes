@@ -142,3 +142,68 @@ def generate_maze():
             r, c = path.pop()
         else:
             break
+
+
+def can_move(r, c, nr, nc):
+    if nr < 0 or nr >= rows or nc < 0 or nc >= cols:
+        return False
+
+    if nr == r - 1 and nc == c:
+        return top_wall[r][c] == 0
+
+    if nr == r + 1 and nc == c:
+        return top_wall[nr][nc] == 0
+
+    if nr == r and nc == c - 1:
+        return right_wall[r][nc] == 0
+
+    if nr == r and nc == c + 1:
+        return right_wall[r][c] == 0
+
+    return False
+
+
+def solve_maze():
+    start = (0, 0)
+    end = (rows - 1, cols - 1)
+
+    path = [start]
+    seen_path = set()
+    dead = set()
+
+    while path:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        cur = path[-1]
+        r, c = cur
+        seen_path.add(cur)
+
+        draw_maze(path=path, dead=dead, cur=cur)
+        clock.tick(5)
+
+        if cur == end:
+            return path
+
+        moves = [
+            (r - 1, c),
+            (r + 1, c),
+            (r, c - 1),
+            (r, c + 1)
+        ]
+
+        random.shuffle(moves)
+        moved = False
+
+        for nr, nc in moves:
+            if (nr, nc) not in seen_path and can_move(r, c, nr, nc):
+                path.append((nr, nc))
+                moved = True
+                break
+
+        if not moved:
+            dead.add(path.pop())
+
+    return None
