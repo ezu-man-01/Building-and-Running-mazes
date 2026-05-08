@@ -30,7 +30,7 @@ def draw_maze(path=None, dead=None, cur=None):
     if path:
         for r, c in path:
             pygame.draw.circle(
-                screen, GREEN,
+                screen, RED,
                 (c * cell_size + cell_size // 2, r * cell_size + cell_size // 2),
                 5
             )
