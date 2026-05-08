@@ -2,31 +2,38 @@ import pygame
 import sys
 import random
 
+# Grid settings
 rows = 15
 cols = 20
 cell_size = 30
 width = cols * cell_size
 height = rows * cell_size
 
+# Initalize pygame window
 pygame.init()
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Maze Generator and Solver")
 clock = pygame.time.Clock()
 
+# colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (220, 0, 0)
 BLUE = (0, 80, 255)
 GREEN = (0, 180, 0)
 
+# Maze structure data
 top_wall = [[1 for _ in range(cols)] for _ in range(rows)]
 right_wall = [[1 for _ in range(cols)] for _ in range(rows)]
 seen = [[False for _ in range(cols)] for _ in range(rows)]
+
+# Draw maze on screen
 
 
 def draw_maze(path=None, dead=None, cur=None):
     screen.fill(WHITE)
 
+    # Draw solution path
     if path:
         for r, c in path:
             pygame.draw.circle(
@@ -35,6 +42,7 @@ def draw_maze(path=None, dead=None, cur=None):
                 5
             )
 
+    # Draw dead ends
     if dead:
         for r, c in dead:
             pygame.draw.circle(
@@ -43,6 +51,7 @@ def draw_maze(path=None, dead=None, cur=None):
                 5
             )
 
+    # Draw current positon
     if cur:
         r, c = cur
         pygame.draw.circle(
@@ -51,6 +60,7 @@ def draw_maze(path=None, dead=None, cur=None):
             7
         )
 
+    # Draw maze walls
     for r in range(rows):
         for c in range(cols):
             x = c * cell_size
@@ -70,7 +80,7 @@ def draw_maze(path=None, dead=None, cur=None):
                 pygame.draw.line(screen, BLACK, (x, y + cell_size),
                                  (x + cell_size, y + cell_size), 2)
 
-    # start and end openings
+    # Maze entrance and exit
     pygame.draw.line(screen, WHITE, (0, cell_size // 2), (0, cell_size - 3), 4)
     pygame.draw.line(
         screen, WHITE,
@@ -80,6 +90,8 @@ def draw_maze(path=None, dead=None, cur=None):
     )
 
     pygame.display.update()
+
+# Get valid neighbors
 
 
 def get_neighbors(r, c):
@@ -99,6 +111,8 @@ def get_neighbors(r, c):
 
     return neighbors
 
+# Remove wall between cells
+
 
 def remove_wall(r, c, nr, nc, direction):
     if direction == "up":
@@ -109,6 +123,8 @@ def remove_wall(r, c, nr, nc, direction):
         right_wall[r][nc] = 0
     elif direction == "right":
         right_wall[r][c] = 0
+
+# Maze generation using DFS backtracking
 
 
 def generate_maze():
@@ -143,6 +159,8 @@ def generate_maze():
         else:
             break
 
+# Check movement validity
+
 
 def can_move(r, c, nr, nc):
     if nr < 0 or nr >= rows or nc < 0 or nc >= cols:
@@ -161,6 +179,8 @@ def can_move(r, c, nr, nc):
         return right_wall[r][c] == 0
 
     return False
+
+# Maze solving using DFS backtracking
 
 
 def solve_maze():
@@ -209,6 +229,7 @@ def solve_maze():
     return None
 
 
+# Run maze generator
 generate_maze()
 solution = solve_maze()
 
