@@ -125,7 +125,7 @@ def generate_maze():
                 sys.exit()
 
         draw_maze(cur=(r, c))
-        clock.tick(10)
+        clock.tick(20)
 
         neighbors = get_neighbors(r, c)
 
